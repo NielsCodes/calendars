@@ -1,8 +1,7 @@
 import { baseApiUrl } from "@/features/api/utils";
 
-// The two keys use different storage on purpose. The pending marker tracks
-// the attempt of this tab, so it lives in sessionStorage. The cooldown limits
-// retries across all tabs, so it lives in localStorage.
+// The pending marker is per tab, so it uses sessionStorage.
+// The cooldown applies to all tabs, so it uses localStorage.
 const SILENT_LOGIN_RETRY_KEY = "calendars_silent-login-retry";
 const SILENT_LOGIN_PENDING_KEY = "calendars_silent-login-pending";
 const SILENT_LOGIN_RETRY_INTERVAL = 30 * 1000;
@@ -19,33 +18,28 @@ const startCooldown = () => {
   localStorage.setItem(SILENT_LOGIN_RETRY_KEY, String(Date.now() + SILENT_LOGIN_RETRY_INTERVAL));
 };
 
-/**
- * Clear the pending attempt of this tab after authentication succeeds.
- * Leaves the shared retry cooldown unchanged.
- */
+/** Clear the pending attempt of this tab after login. Keep the shared cooldown. */
 export const clearPendingSilentLogin = () => {
   try {
     sessionStorage.removeItem(SILENT_LOGIN_PENDING_KEY);
   } catch {
-    // Ignore storage failures during cleanup.
+    // Ignore storage errors.
   }
 };
 
 /**
- * After an anonymous user probe, consume a pending silent login attempt or
- * start one if retries are allowed.
+ * Start a silent login, or end the pending one. Call it only for an anonymous visitor.
  *
- * Requests prompt=none through the backend and supplies the current URL as
- * returnTo. Returns true when navigation to the backend was requested.
+ * Sends the browser to the backend with prompt=none, and returnTo set to the current URL.
+ * Returns true if the redirect starts.
  */
 export const attemptSilentLogin = () => {
-  // A user the app refuses is still authenticated at the provider, so retrying
-  // would log them in and bounce them off again until the cooldown catches up.
+  // The app refused this user. The provider session stays active, so a retry starts a loop.
   const hasAuthError = new URLSearchParams(window.location.search).has("auth_error");
 
   try {
-    // An earlier attempt is still pending and the visitor is anonymous.
-    // Consume it and restart the cooldown to avoid immediately retrying.
+    // The earlier attempt did not log the visitor in.
+    // End it and restart the cooldown, so the app does not retry at once.
     if (sessionStorage.getItem(SILENT_LOGIN_PENDING_KEY)) {
       sessionStorage.removeItem(SILENT_LOGIN_PENDING_KEY);
       startCooldown();
@@ -59,7 +53,7 @@ export const attemptSilentLogin = () => {
     startCooldown();
     sessionStorage.setItem(SILENT_LOGIN_PENDING_KEY, "1");
   } catch {
-    // Skip automatic login if retry state cannot be persisted.
+    // Without saved retry state, do not start a silent login.
     return false;
   }
 

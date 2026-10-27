@@ -1,16 +1,15 @@
-"""Settings that silent login depends on."""
+"""Check the settings that silent login needs."""
 
 from django.conf import settings
 
 
 def get_silent_login_blockers():
     """
-    Return the names of the unset settings that stop logout from ending the
-    SSO session.
+    Return the names of the unset settings that silent login needs.
 
-    Logout ends the SSO session only when it can send the stored ID token to
-    the logout endpoint of the OIDC provider. If it cannot, silent login logs
-    the user back in at once.
+    Logout ends the SSO session only if it sends the stored ID token to the
+    OIDC logout endpoint. If logout keeps the SSO session, silent login logs
+    the user in again.
     """
     return [
         name

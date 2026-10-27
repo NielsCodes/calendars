@@ -95,7 +95,7 @@ def test_api_config(is_authenticated):
 def test_api_config_silent_login_disabled_when_logout_keeps_sso(
     logout_endpoint, store_id_token
 ):
-    """Silent login should be reported as disabled when logout keeps the SSO session."""
+    """The config API disables silent login if logout keeps the SSO session."""
     with override_settings(
         FRONTEND_SILENT_LOGIN_ENABLED=True,
         OIDC_OP_LOGOUT_ENDPOINT=logout_endpoint,

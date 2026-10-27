@@ -50,8 +50,7 @@ export const Auth = ({ children, redirect }: PropsWithChildren & { redirect?: bo
     } catch (error) {
       const is401 = error instanceof APIError && error.code === 401;
 
-      // Preserve user state while navigation starts. On initial load, this
-      // keeps the spinner visible.
+      // Keep the user state during the redirect, so the spinner stays on first load.
       if (is401 && silentLoginEnabled && attemptSilentLogin()) {
         return null;
       }

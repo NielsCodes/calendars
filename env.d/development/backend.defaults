@@ -38,7 +38,7 @@ OIDC_RP_SCOPES="openid email"
 LOGIN_REDIRECT_URL=http://localhost:8930
 LOGIN_REDIRECT_URL_FAILURE=http://localhost:8930
 LOGOUT_REDIRECT_URL=http://localhost:8930
-# End the Keycloak session on logout. Without it, silent login logs the user back in.
+# Logout must end the Keycloak session. If not, silent login logs the user in again.
 OIDC_OP_LOGOUT_ENDPOINT=http://localhost:8935/realms/calendars/protocol/openid-connect/logout
 
 OIDC_REDIRECT_ALLOWED_HOSTS="http://localhost:8933,http://localhost:8930"

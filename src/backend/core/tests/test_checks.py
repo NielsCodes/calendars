@@ -19,7 +19,7 @@ from core.checks import check_silent_login_logout
 def test_check_silent_login_logout(
     silent_login_enabled, logout_endpoint, store_id_token, expected_ids
 ):
-    """Silent login should raise a warning when logout cannot end the SSO session."""
+    """The check warns if silent login is on and logout keeps the SSO session."""
     with override_settings(
         FRONTEND_SILENT_LOGIN_ENABLED=silent_login_enabled,
         OIDC_OP_LOGOUT_ENDPOINT=logout_endpoint,

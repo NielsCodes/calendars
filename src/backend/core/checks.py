@@ -8,7 +8,7 @@ from core.authentication.silent_login import get_silent_login_blockers
 
 @checks.register()
 def check_silent_login_logout(app_configs, **kwargs):  # pylint: disable=unused-argument
-    """Warn when silent login is enabled but logout cannot end the SSO session."""
+    """Warn if silent login is on and logout cannot end the SSO session."""
     if not settings.FRONTEND_SILENT_LOGIN_ENABLED:
         return []
 
