@@ -50,8 +50,8 @@ export const Auth = ({ children, redirect }: PropsWithChildren & { redirect?: bo
     } catch (error) {
       const is401 = error instanceof APIError && error.code === 401;
 
-      // Leave `user` undefined while the redirect commits, so the spinner
-      // below holds instead of flashing the landing page on the way out.
+      // Preserve user state while navigation starts. On initial load, this
+      // keeps the spinner visible.
       if (is401 && silentLoginEnabled && attemptSilentLogin()) {
         return null;
       }
