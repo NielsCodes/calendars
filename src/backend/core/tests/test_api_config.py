@@ -88,13 +88,20 @@ def test_api_config(is_authenticated):
     }
 
 
-@override_settings(
-    FRONTEND_SILENT_LOGIN_ENABLED=True,
-    OIDC_OP_LOGOUT_ENDPOINT=None,
+@pytest.mark.parametrize(
+    "logout_endpoint, store_id_token",
+    [(None, True), ("https://oidc.test/logout", False)],
 )
-def test_api_config_silent_login_disabled_without_logout_endpoint():
-    """Silent login should be reported as disabled without a logout endpoint."""
-    response = APIClient().get("/api/v1.0/config/")
+def test_api_config_silent_login_disabled_when_logout_keeps_sso(
+    logout_endpoint, store_id_token
+):
+    """Silent login should be reported as disabled when logout keeps the SSO session."""
+    with override_settings(
+        FRONTEND_SILENT_LOGIN_ENABLED=True,
+        OIDC_OP_LOGOUT_ENDPOINT=logout_endpoint,
+        OIDC_STORE_ID_TOKEN=store_id_token,
+    ):
+        response = APIClient().get("/api/v1.0/config/")
 
     assert response.status_code == HTTP_200_OK
     assert response.json()["FRONTEND_SILENT_LOGIN_ENABLED"] is False
