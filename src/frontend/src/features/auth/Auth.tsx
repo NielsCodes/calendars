@@ -7,7 +7,7 @@ import { baseApiUrl } from "../api/utils";
 import { APIError } from "../api/APIError";
 import { SpinnerPage } from "@/features/ui/components/spinner/SpinnerPage";
 import { useConfig } from "@/features/config/ConfigProvider";
-import { attemptSilentLogin } from "./silentLogin";
+import { attemptSilentLogin, clearPendingSilentLogin } from "./silentLogin";
 
 export const logout = () => {
   window.location.replace(new URL("logout/", baseApiUrl()).href);
@@ -44,6 +44,7 @@ export const Auth = ({ children, redirect }: PropsWithChildren & { redirect?: bo
       // behavior based on `redirect`.
       const response = await fetchAPI(`users/me/`, { skipAuthRedirect: true });
       const data = (await response.json()) as User;
+      clearPendingSilentLogin();
       setUser(data);
       return data;
     } catch (error) {
