@@ -185,6 +185,11 @@ class ConfigView(views.APIView):
             if hasattr(settings, setting):
                 dict_settings[setting] = getattr(settings, setting)
 
+        # Without an OIDC logout endpoint, logout keeps the SSO session and
+        # silent login logs the user back in at once.
+        if not settings.OIDC_OP_LOGOUT_ENDPOINT:
+            dict_settings["FRONTEND_SILENT_LOGIN_ENABLED"] = False
+
         dict_settings["theme_customization"] = self._load_theme_customization()
 
         return response.Response(dict_settings)

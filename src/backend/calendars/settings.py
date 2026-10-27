@@ -513,8 +513,8 @@ class Base(Configuration):
     )
     # Redirect anonymous visitors straight to the OIDC provider with
     # prompt=none, so a live SSO session logs them in without showing the
-    # landing page. Requires OIDC_OP_LOGOUT_ENDPOINT: if logout does not end
-    # the SSO session, silent login logs the user back in at once.
+    # landing page. Ignored when OIDC_OP_LOGOUT_ENDPOINT is not set: if logout
+    # does not end the SSO session, silent login logs the user back in at once.
     FRONTEND_SILENT_LOGIN_ENABLED = values.BooleanValue(
         default=False, environ_name="FRONTEND_SILENT_LOGIN_ENABLED", environ_prefix=None
     )
