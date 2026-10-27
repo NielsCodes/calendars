@@ -28,9 +28,10 @@ export const clearPendingSilentLogin = () => {
 };
 
 /**
- * Start a silent login, or end the pending one. Call it only for an anonymous visitor.
+ * Start a silent login, or clear a pending attempt. Call it only for an anonymous visitor.
  *
- * Sends the browser to the backend with prompt=none, and returnTo set to the current URL.
+ * Sends silent=true and the current URL as returnTo to the backend.
+ * The backend then asks the provider for prompt=none.
  * Returns true if the redirect starts.
  */
 export const attemptSilentLogin = () => {
