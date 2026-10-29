@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import logging
 import os
 import tomllib
 from socket import gethostbyname, gethostname
@@ -21,6 +22,8 @@ from lasuite.configuration.values import SecretFileValue
 from sentry_sdk.integrations.django import DjangoIntegration
 
 # pylint: disable=too-many-lines
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -945,6 +948,20 @@ class Base(Configuration):
                 "Both OIDC_FALLBACK_TO_EMAIL_FOR_IDENTIFICATION and "
                 "OIDC_ALLOW_DUPLICATE_EMAILS cannot be set to True simultaneously. "
             )
+
+        if cls.FRONTEND_SILENT_LOGIN_ENABLED:
+            missing = [
+                name
+                for name in ("OIDC_OP_LOGOUT_ENDPOINT", "OIDC_STORE_ID_TOKEN")
+                if not getattr(cls, name)
+            ]
+            if missing:
+                logger.warning(
+                    "FRONTEND_SILENT_LOGIN_ENABLED is ignored because these "
+                    "settings are not set: %s. Without them, logout keeps the "
+                    "SSO session and silent login logs the user back in.",
+                    ", ".join(missing),
+                )
 
 
 class Build(Base):

@@ -12,7 +12,7 @@ class CoreConfig(AppConfig):
 
     def ready(self):
         """
-        Import signals and system checks when the app is ready.
+        Import signals when the app is ready.
         """
         # pylint: disable=import-outside-toplevel, unused-import
-        from . import checks, signals  # noqa: PLC0415
+        from . import signals  # noqa: PLC0415
